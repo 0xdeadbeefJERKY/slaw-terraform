@@ -1,1 +1,2 @@
-admin_users = ["0xdeadbeefJERKY"]
+admin_users      = ["0xdeadbeefJERKY"]
+cloudwatch_email = "test@email.com"
