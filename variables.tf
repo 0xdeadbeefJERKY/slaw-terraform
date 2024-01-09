@@ -15,3 +15,9 @@ variable "bucket_name" {
   default     = "slaws-security-sandbox"
   description = "S3 bucket name to which CloudTrail logs will be sent"
 }
+
+variable "cloudwatch_email" {
+  type        = string
+  default     = null
+  description = "Email address to which the CloudWatch metric alarms will be sent"
+}
