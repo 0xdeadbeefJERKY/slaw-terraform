@@ -21,3 +21,8 @@ variable "cloudwatch_email" {
   default     = null
   description = "Email address to which the CloudWatch metric alarms will be sent"
 }
+
+variable "account_email" {
+  type        = string
+  description = "Email address that supports plus addressing (e.g., GMail)"
+}
