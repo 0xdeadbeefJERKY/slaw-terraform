@@ -23,6 +23,33 @@ resource "aws_iam_user_group_membership" "administrators" {
   groups = [aws_iam_group.administrators.name]
 }
 
+# LAB: Create Your First IAM Role
+data "aws_iam_policy_document" "ssm_trust_policy" {
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ec2.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role" "ssm" {
+  name               = "SSMInstance"
+  assume_role_policy = data.aws_iam_policy_document.ssm_trust_policy.json
+}
+
+data "aws_iam_policy" "ssm" {
+  name = "AmazonSSMManagedInstanceCore"
+}
+
+resource "aws_iam_role_policy_attachment" "ssm" {
+  role       = aws_iam_role.ssm.name
+  policy_arn = data.aws_iam_policy.ssm.arn
+}
+
 # LAB: Write a Simple IAM Policy
 data "aws_iam_policy_document" "cloudtrail_rw" {
   statement {
