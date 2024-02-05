@@ -49,3 +49,23 @@ resource "aws_iam_role_policy_attachment" "ssm" {
   role       = aws_iam_role.ssm.name
   policy_arn = data.aws_iam_policy.ssm.arn
 }
+
+# LAB: Write a Simple IAM Policy
+data "aws_iam_policy_document" "cloudtrail_rw" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject"
+    ]
+
+    resources = ["${aws_s3_bucket.default.arn}/*"]
+  }
+}
+
+resource "aws_iam_policy" "cloudtrail_rw" {
+  name        = "CloudtrailReadWrite"
+  description = "Allow read and write access to our main CloudTrail bucket."
+  policy      = data.aws_iam_policy_document.cloudtrail_rw.json
+}
