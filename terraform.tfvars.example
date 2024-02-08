@@ -1,3 +1,4 @@
 admin_users      = ["0xdeadbeefJERKY"]
-bucket_name = "slaws-security-sandbox"
+bucket_name      = "insert-cloudtrail-bucket-name-here"
 cloudwatch_email = "test@email.com"
+account_email    = "account@email.com"
