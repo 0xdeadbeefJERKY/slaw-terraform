@@ -32,3 +32,8 @@ variable "account_email" {
   type        = string
   description = "Email address that supports plus addressing (e.g., GMail)"
 }
+
+variable "sso_display_name" {
+  type        = string
+  description = "Display name used for admin/default user in Identity Center"
+}
