@@ -8,6 +8,8 @@ resource "aws_organizations_organization" "default" {
   feature_set = "ALL"
   # LAB: Enable SCPs, the Security Blanket of AWS
   enabled_policy_types = ["SERVICE_CONTROL_POLICY"]
+  # LAB: Enabling the Org Trail
+  aws_service_access_principals = ["cloudtrail.amazonaws.com"]
 }
 
 resource "aws_organizations_organizational_unit" "security" {
