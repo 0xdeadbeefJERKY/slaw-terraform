@@ -16,6 +16,12 @@ variable "bucket_name" {
   description = "S3 bucket name to which CloudTrail logs will be sent"
 }
 
+variable "security_audit_bucket_name" {
+  type        = string
+  default     = null
+  description = "S3 bucket name to which Security Audit account CloudTrail logs will be sent"
+}
+
 variable "cloudwatch_email" {
   type        = string
   default     = null

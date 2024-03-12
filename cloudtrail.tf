@@ -73,3 +73,9 @@ resource "aws_cloudtrail" "default" {
 
   depends_on = [aws_s3_bucket_policy.default]
 }
+
+# LAB: Assume the Role!
+resource "aws_s3_bucket" "cloudtrail_security_audit" {
+  provider = aws.security-audit
+  bucket   = var.security_audit_bucket_name
+}
