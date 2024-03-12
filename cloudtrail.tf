@@ -79,3 +79,83 @@ resource "aws_s3_bucket" "cloudtrail_security_audit" {
   provider = aws.security-audit
   bucket   = var.security_audit_bucket_name
 }
+
+# LAB: Secure that Bucket!
+data "aws_iam_policy_document" "security_audit" {
+  version = "2012-10-17"
+
+  statement {
+    sid    = "AWSCloudTrailAclCheck20150319"
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["cloudtrail.amazonaws.com"]
+    }
+
+    actions   = ["s3:GetBucketAcl"]
+    resources = [aws_s3_bucket.cloudtrail_security_audit.arn]
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceArn"
+      values   = [aws_cloudtrail.default.arn]
+    }
+  }
+
+  statement {
+    sid    = "AWSCloudTrailWrite20150319"
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["cloudtrail.amazonaws.com"]
+    }
+
+    actions   = ["s3:PutObject"]
+    resources = ["${aws_s3_bucket.cloudtrail_security_audit.arn}/AWSLogs/${data.aws_caller_identity.current.account_id}/*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "s3:x-amz-acl"
+      values   = ["bucket-owner-full-control"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceArn"
+      values   = [aws_cloudtrail.default.arn]
+    }
+  }
+
+  statement {
+    sid    = "AWSCloudTrailOrganizationWrite20150319"
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["cloudtrail.amazonaws.com"]
+    }
+
+    actions   = ["s3:PutObject"]
+    resources = ["${aws_s3_bucket.cloudtrail_security_audit.arn}/AWSLogs/${aws_organizations_organization.default.id}/*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "s3:x-amz-acl"
+      values   = ["bucket-owner-full-control"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceArn"
+      values   = [aws_cloudtrail.default.arn]
+    }
+  }
+}
+
+resource "aws_s3_bucket_policy" "security_audit" {
+  provider = aws.security-audit
+  bucket   = aws_s3_bucket.cloudtrail_security_audit.id
+  policy   = data.aws_iam_policy_document.security_audit.json
+}
