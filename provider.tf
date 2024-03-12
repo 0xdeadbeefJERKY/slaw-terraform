@@ -12,3 +12,14 @@ terraform {
 provider "aws" {
   region = var.region
 }
+
+# LAB: Assume the Role!
+provider "aws" {
+  alias  = "security-audit"
+  region = var.region
+
+  assume_role {
+    role_arn     = "arn:aws:iam::${aws_organizations_account.security_audit.id}:role/OrganizationAccountAccessRole"
+    session_name = "tf-security-audit-org"
+  }
+}

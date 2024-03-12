@@ -1,4 +1,5 @@
-admin_users      = ["0xdeadbeefJERKY"]
-bucket_name      = "insert-cloudtrail-bucket-name-here"
-cloudwatch_email = "test@email.com"
-account_email    = "account@email.com"
+admin_users                 = ["0xdeadbeefJERKY"]
+bucket_name                 = "insert-cloudtrail-bucket-name-here"
+security_audit_bucket_name  = "insert-cloudtrail-bucket-name-here-with-suffix"
+cloudwatch_email            = "test@email.com"
+account_email               = "account@email.com"
