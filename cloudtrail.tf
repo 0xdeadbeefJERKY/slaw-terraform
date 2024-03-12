@@ -67,9 +67,11 @@ resource "aws_s3_bucket_policy" "default" {
 
 resource "aws_cloudtrail" "default" {
   name                       = "default"
-  s3_bucket_name             = aws_s3_bucket.default.id
   enable_log_file_validation = true
   is_multi_region_trail      = true
+  # LAB: Enabling the Org Trail
+  s3_bucket_name        = aws_s3_bucket.cloudtrail_security_audit.id
+  is_organization_trail = true
 
   depends_on = [aws_s3_bucket_policy.default]
 }
