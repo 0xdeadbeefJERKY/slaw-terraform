@@ -43,3 +43,34 @@ resource "aws_identitystore_group_membership" "default" {
   member_id         = aws_identitystore_user.default.user_id
   identity_store_id = tolist(data.aws_ssoadmin_instances.default.identity_store_ids)[0]
 }
+
+# LAB: Another Me? SSO with IAM Identity Center Part 2
+resource "aws_ssoadmin_permission_set" "admin" {
+  name         = "AdministratorAccess"
+  description  = "Full admin"
+  instance_arn = tolist(data.aws_ssoadmin_instances.default.arns)[0]
+}
+
+resource "aws_ssoadmin_managed_policy_attachment" "admin" {
+  instance_arn       = tolist(data.aws_ssoadmin_instances.default.arns)[0]
+  managed_policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
+  permission_set_arn = aws_ssoadmin_permission_set.admin.arn
+}
+
+resource "aws_ssoadmin_account_assignment" "admin_security_audit" {
+  instance_arn       = tolist(data.aws_ssoadmin_instances.default.arns)[0]
+  permission_set_arn = aws_ssoadmin_permission_set.admin.arn
+  principal_id       = aws_identitystore_group.admins.group_id
+  principal_type     = "GROUP"
+  target_id          = aws_organizations_account.security_audit.id
+  target_type        = "AWS_ACCOUNT"
+}
+
+resource "aws_ssoadmin_account_assignment" "admin_management" {
+  instance_arn       = tolist(data.aws_ssoadmin_instances.default.arns)[0]
+  permission_set_arn = aws_ssoadmin_permission_set.admin.arn
+  principal_id       = aws_identitystore_group.admins.group_id
+  principal_type     = "GROUP"
+  target_id          = data.aws_caller_identity.current.account_id
+  target_type        = "AWS_ACCOUNT"
+}
