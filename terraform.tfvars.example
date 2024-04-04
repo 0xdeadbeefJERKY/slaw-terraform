@@ -4,3 +4,13 @@ security_audit_bucket_name  = "insert-cloudtrail-bucket-name-here-with-suffix"
 cloudwatch_email            = "test@email.com"
 account_email               = "account@email.com"
 sso_display_name            = "First Last"
+
+organizational_units = [
+    "Infrastructure",
+    "Workloads"
+]
+
+account_to_ou_mapping = {
+    "SecurityOperations" = ["Security"],
+    "IAM"                = ["Security"]
+}
