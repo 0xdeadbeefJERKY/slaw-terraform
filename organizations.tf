@@ -2,6 +2,15 @@
 locals {
   username = split("@", var.account_email)[0]
   domain   = split("@", var.account_email)[1]
+
+  account_to_ou = flatten([
+    for account, ou_list in var.account_to_ou_mapping : [
+      for ou in ou_list : {
+        account = account
+        ou      = ou
+      }
+    ]
+  ])
 }
 
 resource "aws_organizations_organization" "default" {
@@ -21,10 +30,27 @@ resource "aws_organizations_organizational_unit" "security" {
   parent_id = aws_organizations_organization.default.roots[0].id
 }
 
+resource "aws_organizations_organizational_unit" "default" {
+  for_each = toset(var.organizational_units)
+
+  name      = each.value
+  parent_id = aws_organizations_organization.default.roots[0].id
+}
+
 resource "aws_organizations_account" "security_audit" {
   name      = "SecurityAudit"
   email     = "${local.username}+securityaudit@${local.domain}"
   parent_id = aws_organizations_organizational_unit.security.id
+}
+
+resource "aws_organizations_account" "default" {
+  for_each = tomap({
+    for mapping in local.account_to_ou : mapping.account => mapping
+  })
+
+  name      = each.value.account
+  email     = "${local.username}+${lower(each.value.account)}@${local.domain}"
+  parent_id = each.value.ou == "Security" ? aws_organizations_organizational_unit.security.id : aws_organizations_organizational_unit.default[each.value.ou].id
 }
 
 # LAB: Enable SCPs, the Security Blanket of AWS

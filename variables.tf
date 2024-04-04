@@ -37,3 +37,13 @@ variable "sso_display_name" {
   type        = string
   description = "Display name used for admin/default user in Identity Center"
 }
+
+variable "organizational_units" {
+  type        = list(string)
+  description = "List of additional OU names (with the exception of Security)"
+}
+
+variable "account_to_ou_mapping" {
+  type        = map(list(string))
+  description = "Map of AWS accounts to their respective OUs (excluding the SecurityAudit account)"
+}
