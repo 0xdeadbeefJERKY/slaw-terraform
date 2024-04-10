@@ -14,3 +14,5 @@ account_to_ou_mapping = {
     "SecurityOperations" = ["Security"],
     "IAM"                = ["Security"]
 }
+
+log_archive_account_id = "112233445566"

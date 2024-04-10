@@ -19,7 +19,10 @@ provider "aws" {
   region = var.region
 
   assume_role {
-    role_arn     = "arn:aws:iam::${aws_organizations_account.security_audit.id}:role/OrganizationAccountAccessRole"
+    # LAB: OUs, SCPs and Root User Account Recovery
+    # Continue using the original SecurityAudit role that now resides in the 
+    # LogArchive account
+    role_arn     = "arn:aws:iam::${aws_organizations_account.default["LogArchive"].id}:role/OrganizationAccountAccessRole"
     session_name = "tf-security-audit-org"
   }
 }
