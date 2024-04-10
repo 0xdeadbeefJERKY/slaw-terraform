@@ -47,3 +47,8 @@ variable "account_to_ou_mapping" {
   type        = map(list(string))
   description = "Map of AWS accounts to their respective OUs (excluding the SecurityAudit account)"
 }
+
+variable "log_archive_account_id" {
+  type        = string
+  description = "Account ID for the LogArchive (formerly SecurityAudit) to be imported"
+}

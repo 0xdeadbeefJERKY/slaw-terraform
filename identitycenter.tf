@@ -66,6 +66,18 @@ resource "aws_ssoadmin_account_assignment" "admin_security_audit" {
   target_type        = "AWS_ACCOUNT"
 }
 
+# LAB: OUs, SCPs and Root User Account Recovery
+# Run `terraform state mv aws_ssoadmin_account_assignment.admin_security_audit aws_ssoadmin_account_assignment.admin_log_archive` 
+
+resource "aws_ssoadmin_account_assignment" "admin_log_archive" {
+  instance_arn       = tolist(data.aws_ssoadmin_instances.default.arns)[0]
+  permission_set_arn = aws_ssoadmin_permission_set.admin.arn
+  principal_id       = aws_identitystore_group.admins.group_id
+  principal_type     = "GROUP"
+  target_id          = aws_organizations_account.default["LogArchive"].id
+  target_type        = "AWS_ACCOUNT"
+}
+
 resource "aws_ssoadmin_account_assignment" "admin_management" {
   instance_arn       = tolist(data.aws_ssoadmin_instances.default.arns)[0]
   permission_set_arn = aws_ssoadmin_permission_set.admin.arn

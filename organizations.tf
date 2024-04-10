@@ -38,10 +38,15 @@ resource "aws_organizations_organizational_unit" "default" {
 }
 
 resource "aws_organizations_account" "security_audit" {
-  name      = "SecurityAudit"
-  email     = "${local.username}+securityaudit@${local.domain}"
+  name = "SecurityAudit"
+  # LAB: OUs, SCPs and Root User Account Recovery
+  # Use unique email address for the "new" SecurityAudit account
+  email     = "${local.username}+securityaudit1@${local.domain}"
   parent_id = aws_organizations_organizational_unit.security.id
 }
+
+# LAB: OUs, SCPs and Root User Account Recovery
+# Run `terraform state mv aws_organizations_account.security_audit 'aws_organizations_account.default["LogArchive"]'` 
 
 resource "aws_organizations_account" "default" {
   for_each = tomap({
@@ -85,6 +90,11 @@ resource "aws_organizations_policy" "protect_root" {
 }
 
 resource "aws_organizations_policy_attachment" "protect_root" {
+  # LAB: OUs, SCPs and Root User Account Recovery
+  # Detach the "protect root" SCP from the root of the OU hierarchy and attach
+  # it all OUs except the "Exceptions" OU
+  for_each = toset([for ou in var.organizational_units : ou if ou != "Exceptions"])
+
   policy_id = aws_organizations_policy.protect_root.id
-  target_id = aws_organizations_organization.default.roots[0].id
+  target_id = aws_organizations_organizational_unit.default[each.value].id
 }
