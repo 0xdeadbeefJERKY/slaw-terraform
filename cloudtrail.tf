@@ -161,3 +161,22 @@ resource "aws_s3_bucket_policy" "security_audit" {
   bucket   = aws_s3_bucket.cloudtrail_security_audit.id
   policy   = data.aws_iam_policy_document.security_audit.json
 }
+
+# LAB: On the Meaning of Life(cycles), Versions, and Ransomware
+resource "aws_s3_bucket_lifecycle_configuration" "delete_old_objects" {
+  provider = aws.security-audit
+  bucket   = aws_s3_bucket.cloudtrail_security_audit.id
+
+  rule {
+    id     = "DeleteOldObjects"
+    status = "Enabled"
+
+    expiration {
+      days = var.cloudtrail_s3_object_expiration_days
+    }
+
+    noncurrent_version_expiration {
+      noncurrent_days = var.cloudtrail_s3_object_expiration_days
+    }
+  }
+}
