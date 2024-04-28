@@ -52,3 +52,9 @@ variable "log_archive_account_id" {
   type        = string
   description = "Account ID for the LogArchive (formerly SecurityAudit) to be imported"
 }
+
+variable "cloudtrail_s3_object_expiration_days" {
+  type        = number
+  default     = 90
+  description = "CloudTrail S3 object lifetime in days"
+}
