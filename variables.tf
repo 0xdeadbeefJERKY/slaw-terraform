@@ -39,13 +39,18 @@ variable "sso_display_name" {
 }
 
 variable "organizational_units" {
-  type        = list(string)
+  type        = map(list(string))
   description = "List of additional OU names (with the exception of Security)"
 }
 
 variable "account_to_ou_mapping" {
   type        = map(list(string))
   description = "Map of AWS accounts to their respective OUs (excluding the SecurityAudit account)"
+}
+
+variable "account_to_nested_ou_mapping" {
+  type        = map(list(string))
+  description = "Map of AWS accounts to their respective nested OUs"
 }
 
 variable "log_archive_account_id" {
@@ -57,4 +62,24 @@ variable "cloudtrail_s3_object_expiration_days" {
   type        = number
   default     = 90
   description = "CloudTrail S3 object lifetime in days"
+}
+
+variable "alternate_contact_name" {
+  type        = string
+  description = "Name of the alternate contact"
+}
+
+variable "alternate_contact_title" {
+  type        = string
+  description = "Title of the alternate contact"
+}
+
+variable "alternate_contact_email_address" {
+  type        = string
+  description = "Email address of the alternate contact"
+}
+
+variable "alternate_contact_phone_number" {
+  type        = string
+  description = "Phone number of the alternate contact"
 }
