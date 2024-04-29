@@ -5,14 +5,18 @@ cloudwatch_email            = "test@email.com"
 account_email               = "account@email.com"
 sso_display_name            = "First Last"
 
-organizational_units = [
-    "Infrastructure",
-    "Workloads"
-]
+organizational_units = {
+    "Infrastructure" = [],
+    "Workloads" = ["Prod", "NonProd"]
+}
 
 account_to_ou_mapping = {
     "SecurityOperations" = ["Security"],
     "IAM"                = ["Security"]
 }
 
-log_archive_account_id = "112233445566"
+log_archive_account_id          = "112233445566"
+alternate_contact_name          = "First Name"
+alternate_contact_title         = "Security Engineer"
+alternate_contact_email_address = "test@email.com"
+alternate_contact_phone_number  = "+11234567890"
