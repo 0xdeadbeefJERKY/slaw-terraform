@@ -123,3 +123,16 @@ resource "aws_account_alternate_contact" "operations" {
   email_address          = var.alternate_contact_email_address
   phone_number           = var.alternate_contact_phone_number
 }
+
+# LAB: Enable Delegated Administrator for Identity Center and CloudTrail
+resource "aws_organizations_delegated_administrator" "iam" {
+  account_id        = aws_organizations_account.default["IAM"].id
+  service_principal = "sso.amazonaws.com"
+}
+
+# https://github.com/hashicorp/terraform-provider-aws/issues/29179#issuecomment-1836989656
+# Currently, Terraform doesn't support creating a CloudTrail delegated 
+# administrator using the CloudTrail API, so it has to be done manually:
+#
+# $ SECURITY_AUDIT_ID=$(aws organizations list-accounts --query 'Accounts[?Name==`SecurityAudit`].Id' --output text)
+# $ aws cloudtrail register-organization-delegated-admin --member-account-id $SECURITY_AUDIT_ID
