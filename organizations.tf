@@ -20,6 +20,10 @@ locals {
       }
     ]
   ])
+
+  # LAB: Creating Security Team Permissions in IAM Identity Center
+  accounts        = toset([for mapping in local.account_to_ou : mapping.account])
+  accounts_nested = toset([for mapping in local.account_to_nested_ou : mapping.account])
 }
 
 resource "aws_organizations_organization" "default" {

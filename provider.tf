@@ -26,3 +26,14 @@ provider "aws" {
     session_name = "tf-security-audit-org"
   }
 }
+
+# LAB: Creating Security Team Permissions in IAM Identity Center
+provider "aws" {
+  alias  = "iam"
+  region = var.region
+
+  assume_role {
+    role_arn     = "arn:aws:iam::${aws_organizations_account.default["IAM"].id}:role/OrganizationAccountAccessRole"
+    session_name = "tf-iam-org"
+  }
+}
