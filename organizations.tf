@@ -36,7 +36,9 @@ resource "aws_organizations_organization" "default" {
     # LAB: Bring in the Fed(eration)
     "sso.amazonaws.com",
     # LAB: Buttoning Up the Org
-    "account.amazonaws.com"
+    "account.amazonaws.com",
+    # LAB: Enable GuardDuty the Right Way
+    "guardduty.amazonaws.com"
   ]
 }
 
