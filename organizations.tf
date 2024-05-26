@@ -38,7 +38,9 @@ resource "aws_organizations_organization" "default" {
     # LAB: Buttoning Up the Org
     "account.amazonaws.com",
     # LAB: Enable GuardDuty the Right Way
-    "guardduty.amazonaws.com"
+    "guardduty.amazonaws.com",
+    # LAB: The Best Way to Start with AWS Security Hub
+    "securityhub.amazonaws.com"
   ]
 }
 
