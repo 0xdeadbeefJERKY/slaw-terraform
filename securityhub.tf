@@ -32,31 +32,31 @@ resource "aws_securityhub_organization_admin_account" "security_audit" {
 # Run `terraform apply`, then comment out the below resources.
 ##############################################################################
 
-import {
-  provider = aws.sa
+# import {
+#   provider = aws.sa
 
-  to = aws_securityhub_standards_subscription.aws_best_practices_100
-  id = "arn:aws:securityhub:${data.aws_region.sa.name}:${data.aws_caller_identity.sa.account_id}:subscription/aws-foundational-security-best-practices/v/1.0.0"
-}
+#   to = aws_securityhub_standards_subscription.aws_best_practices_100
+#   id = "arn:aws:securityhub:${data.aws_region.sa.name}:${data.aws_caller_identity.sa.account_id}:subscription/aws-foundational-security-best-practices/v/1.0.0"
+# }
 
-resource "aws_securityhub_standards_subscription" "aws_best_practices_100" {
-  provider = aws.sa
+# resource "aws_securityhub_standards_subscription" "aws_best_practices_100" {
+#   provider = aws.sa
 
-  standards_arn = "arn:aws:securityhub:${data.aws_region.sa.name}::standards/aws-foundational-security-best-practices/v/1.0.0"
-}
+#   standards_arn = "arn:aws:securityhub:${data.aws_region.sa.name}::standards/aws-foundational-security-best-practices/v/1.0.0"
+# }
 
-import {
-  provider = aws.sa
+# import {
+#   provider = aws.sa
 
-  to = aws_securityhub_standards_subscription.cis
-  id = "arn:aws:securityhub:${data.aws_region.sa.name}:${data.aws_caller_identity.sa.account_id}:subscription/cis-aws-foundations-benchmark/v/1.2.0"
-}
+#   to = aws_securityhub_standards_subscription.cis
+#   id = "arn:aws:securityhub:${data.aws_region.sa.name}:${data.aws_caller_identity.sa.account_id}:subscription/cis-aws-foundations-benchmark/v/1.2.0"
+# }
 
-resource "aws_securityhub_standards_subscription" "cis" {
-  provider = aws.sa
+# resource "aws_securityhub_standards_subscription" "cis" {
+#   provider = aws.sa
 
-  standards_arn = "arn:aws:securityhub:::ruleset/cis-aws-foundations-benchmark/v/1.2.0"
-}
+#   standards_arn = "arn:aws:securityhub:::ruleset/cis-aws-foundations-benchmark/v/1.2.0"
+# }
 
 ##############################################################################
 # End comment block
