@@ -48,3 +48,14 @@ provider "aws" {
     session_name = "tf-iam-org"
   }
 }
+
+# LAB: PBAC and ABAC? Write an Intermediate AWS IAM Policy
+provider "aws" {
+  alias  = "test1"
+  region = var.region
+
+  assume_role {
+    role_arn     = "arn:aws:iam::${aws_organizations_account.nested["TestAccount1"].id}:role/OrganizationAccountAccessRole"
+    session_name = "tf-testaccount1-org"
+  }
+}
