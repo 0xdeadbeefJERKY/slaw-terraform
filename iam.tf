@@ -69,3 +69,40 @@ resource "aws_iam_policy" "cloudtrail_rw" {
   description = "Allow read and write access to our main CloudTrail bucket."
   policy      = data.aws_iam_policy_document.cloudtrail_rw.json
 }
+
+# LAB: PBAC and ABAC? Write an Intermediate AWS IAM Policy
+data "http" "my_public_ip" {
+  url = "https://icanhazip.com"
+}
+
+data "aws_iam_policy_document" "test_ec2_actions" {
+  statement {
+    effect    = "Allow"
+    resources = ["*"]
+
+    actions = [
+      "ec2:StartInstances",
+      "ec2:StopInstances",
+      "ec2:Describe*"
+    ]
+  }
+
+  statement {
+    effect    = "Deny"
+    resources = ["*"]
+    actions   = ["ec2:TerminateInstances"]
+
+    condition {
+      test     = "IpAddress"
+      variable = "aws:SourceIp"
+      values   = [chomp(data.http.my_public_ip.response_body)]
+    }
+  }
+}
+
+resource "aws_iam_policy" "delete_me_now_please" {
+  provider = aws.test1
+
+  name   = "DeleteMePleaseNow"
+  policy = data.aws_iam_policy_document.test_ec2_actions.json
+}
