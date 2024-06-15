@@ -118,6 +118,33 @@ resource "aws_ssoadmin_managed_policy_attachment" "identity_center_admin" {
   permission_set_arn = aws_ssoadmin_permission_set.identity_center_admin.arn
 }
 
+# Skills Challenge: IAM Identity Center
+data "aws_iam_policy_document" "iam_admin" {
+  statement {
+    sid       = "IamAdmin"
+    effect    = "Allow"
+    resources = ["*"]
+
+    actions = [
+      "iam:CreatePolicy*",
+      "iam:DeletePolicy*",
+      "iam:GetPolicy*",
+      "iam:ListPolicies",
+      "iam:ListPolicyVersions",
+      "iam:SetDefaultPolicyVersion",
+      "iam:ListEntitiesForPolicy"
+    ]
+  }
+}
+
+resource "aws_ssoadmin_permission_set_inline_policy" "identity_center_admin" {
+  provider = aws.iam
+
+  inline_policy      = data.aws_iam_policy_document.iam_admin.json
+  instance_arn       = tolist(data.aws_ssoadmin_instances.default.arns)[0]
+  permission_set_arn = aws_ssoadmin_permission_set.identity_center_admin.arn
+}
+
 resource "aws_ssoadmin_permission_set" "security_full_admin" {
   provider = aws.iam
 
