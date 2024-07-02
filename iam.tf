@@ -106,3 +106,30 @@ resource "aws_iam_policy" "delete_me_now_please" {
   name   = "DeleteMePleaseNow"
   policy = data.aws_iam_policy_document.test_ec2_actions.json
 }
+
+# LAB: Permissions Boundaries Made Easy
+data "aws_iam_policy_document" "iam_admin_perm_boundary" {
+  version = "2012-10-17"
+
+  statement {
+    sid       = "AllowAllActions"
+    effect    = "Allow"
+    actions   = ["*"]
+    resources = ["*"]
+  }
+
+  statement {
+    sid       = "DenyActionsOnSpecificPermissionSet"
+    effect    = "Deny"
+    actions   = ["*"]
+    resources = [aws_ssoadmin_permission_set.identity_center_admin.arn]
+  }
+}
+
+resource "aws_iam_policy" "sso_permission_boundary" {
+  provider = aws.iam
+
+  name        = "SSOPermissionBoundary"
+  policy      = data.aws_iam_policy_document.iam_admin_perm_boundary.json
+  description = "Restricts an IAM Identity Center administrator from escalating privileges"
+}
