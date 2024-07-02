@@ -275,3 +275,18 @@ resource "aws_ssoadmin_account_assignment" "admin_management" {
   target_id          = data.aws_caller_identity.current.account_id
   target_type        = "AWS_ACCOUNT"
 }
+
+# LAB: Permissions Boundaries Made Easy
+resource "aws_ssoadmin_permissions_boundary_attachment" "iam_admin" {
+  provider = aws.iam
+
+  instance_arn       = tolist(data.aws_ssoadmin_instances.default.arns)[0]
+  permission_set_arn = aws_ssoadmin_permission_set.identity_center_admin.arn
+
+  permissions_boundary {
+    customer_managed_policy_reference {
+      name = aws_iam_policy.sso_permission_boundary.name
+      path = "/"
+    }
+  }
+}
