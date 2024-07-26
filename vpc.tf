@@ -1,3 +1,8 @@
+# LAB: Journey to the Center of a VPC: Getting Started with Cloud Networks
+resource "awsutils_default_vpc_deletion" "default" {
+  provider = awsutils.test1
+}
+
 # LAB: Build a VPC from Scratch
 resource "aws_vpc" "cloudslaw" {
   provider = aws.test1
