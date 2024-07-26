@@ -4,6 +4,12 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.0"
     }
+
+    # LAB: Journey to the Center of a VPC: Getting Started with Cloud Networks
+    awsutils = {
+      source  = "cloudposse/awsutils"
+      version = "0.19.1"
+    }
   }
 
   required_version = "~> 1.6.6"
@@ -51,6 +57,17 @@ provider "aws" {
 
 # LAB: PBAC and ABAC? Write an Intermediate AWS IAM Policy
 provider "aws" {
+  alias  = "test1"
+  region = var.region
+
+  assume_role {
+    role_arn     = "arn:aws:iam::${aws_organizations_account.nested["TestAccount1"].id}:role/OrganizationAccountAccessRole"
+    session_name = "tf-testaccount1-org"
+  }
+}
+
+# LAB: PBAC and ABAC? Write an Intermediate AWS IAM Policy
+provider "awsutils" {
   alias  = "test1"
   region = var.region
 
