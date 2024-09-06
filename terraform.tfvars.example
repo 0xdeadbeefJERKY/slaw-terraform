@@ -24,3 +24,5 @@ alternate_contact_name          = "First Name"
 alternate_contact_title         = "Security Engineer"
 alternate_contact_email_address = "test@email.com"
 alternate_contact_phone_number  = "+11234567890"
+
+enable_test1_vpc = false
