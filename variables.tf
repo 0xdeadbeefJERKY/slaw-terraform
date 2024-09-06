@@ -89,9 +89,3 @@ variable "enable_test1_vpc" {
   default     = false
   description = "Deploys test VPC in Test1 account"
 }
-
-variable "enable_test1_sgs" {
-  type        = bool
-  default     = false
-  description = "Deploys test Security Groups to test VPC in Test1 account"
-}

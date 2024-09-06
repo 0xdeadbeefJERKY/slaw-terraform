@@ -12,10 +12,91 @@ resource "aws_vpc" "cloudslaw" {
   count    = var.enable_test1_vpc ? 1 : 0
   provider = aws.test1
 
-  cidr_block = "10.0.0.0/16"
+  cidr_block           = "10.0.0.0/16"
+  enable_dns_hostnames = true
+  enable_dns_support   = true
 
   tags = {
     Name = "CloudSLAW"
+  }
+}
+
+# LAB: Running Our First Instance (Finally!)
+resource "aws_vpc_dhcp_options" "cloudslaw" {
+  count    = var.enable_test1_vpc ? 1 : 0
+  provider = aws.test1
+
+  domain_name         = "ec2.internal"
+  domain_name_servers = ["AmazonProvidedDNS"]
+
+  tags = {
+    Name = "CloudSLAW-DHCP"
+  }
+}
+
+resource "aws_vpc_dhcp_options_association" "cloudslaw" {
+  count    = var.enable_test1_vpc ? 1 : 0
+  provider = aws.test1
+
+  vpc_id          = aws_vpc.cloudslaw[0].id
+  dhcp_options_id = aws_vpc_dhcp_options.cloudslaw[0].id
+}
+
+resource "aws_network_acl" "cloudslaw_public" {
+  count    = var.enable_test1_vpc ? 1 : 0
+  provider = aws.test1
+
+  vpc_id = aws_vpc.cloudslaw[0].id
+
+  ingress {
+    rule_no    = 100
+    protocol   = -1
+    from_port  = 0
+    to_port    = 0
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+  }
+
+  egress {
+    rule_no    = 100
+    protocol   = -1
+    from_port  = 0
+    to_port    = 0
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+  }
+
+  tags = {
+    Name = "CloudSLAW-Public-NACL"
+  }
+}
+
+resource "aws_network_acl" "cloudslaw_private" {
+  count    = var.enable_test1_vpc ? 1 : 0
+  provider = aws.test1
+
+  vpc_id = aws_vpc.cloudslaw[0].id
+
+  ingress {
+    rule_no    = 100
+    protocol   = -1
+    from_port  = 0
+    to_port    = 0
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+  }
+
+  egress {
+    rule_no    = 100
+    protocol   = -1
+    from_port  = 0
+    to_port    = 0
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+  }
+
+  tags = {
+    Name = "CloudSLAW-Private-NACL"
   }
 }
 
@@ -110,6 +191,55 @@ resource "aws_subnet" "cloudslaw_private_2" {
 
   tags = {
     Name = "slaw-private-2"
+  }
+}
+
+# LAB: Running Our First Instance (Finally!)
+resource "aws_network_acl_association" "cloudslaw_public1" {
+  count    = var.enable_test1_vpc ? 1 : 0
+  provider = aws.test1
+
+  network_acl_id = aws_network_acl.cloudslaw_public[0].id
+  subnet_id      = aws_subnet.cloudslaw_public_1[0].id
+}
+
+resource "aws_network_acl_association" "cloudslaw_public2" {
+  count    = var.enable_test1_vpc ? 1 : 0
+  provider = aws.test1
+
+  network_acl_id = aws_network_acl.cloudslaw_public[0].id
+  subnet_id      = aws_subnet.cloudslaw_public_2[0].id
+}
+
+resource "aws_network_acl_association" "cloudslaw_private1" {
+  count    = var.enable_test1_vpc ? 1 : 0
+  provider = aws.test1
+
+  network_acl_id = aws_network_acl.cloudslaw_public[0].id
+  subnet_id      = aws_subnet.cloudslaw_private_1[0].id
+}
+
+resource "aws_network_acl_association" "cloudslaw_private2" {
+  count    = var.enable_test1_vpc ? 1 : 0
+  provider = aws.test1
+
+  network_acl_id = aws_network_acl.cloudslaw_public[0].id
+  subnet_id      = aws_subnet.cloudslaw_private_2[0].id
+}
+
+resource "aws_security_group" "private" {
+  count    = var.enable_test1_vpc ? 1 : 0
+  provider = aws.test1
+
+  name        = "CloudSLAW-Private-SG"
+  description = "Private security group with no inbound rules and outbound access to all IPs"
+  vpc_id      = aws_vpc.cloudslaw[0].id
+
+  egress {
+    protocol    = -1
+    from_port   = 0
+    to_port     = 0
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
