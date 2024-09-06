@@ -133,3 +133,28 @@ resource "aws_iam_policy" "sso_permission_boundary" {
   policy      = data.aws_iam_policy_document.iam_admin_perm_boundary.json
   description = "Restricts an IAM Identity Center administrator from escalating privileges"
 }
+
+# LAB: Running Our First Instance (Finally!)
+resource "aws_iam_role" "ssm_client" {
+  count    = var.enable_test1_vpc ? 1 : 0
+  provider = aws.test1
+
+  name               = "SSMClient"
+  assume_role_policy = data.aws_iam_policy_document.ssm_trust_policy.json
+}
+
+resource "aws_iam_role_policy_attachment" "ssm_client" {
+  count    = var.enable_test1_vpc ? 1 : 0
+  provider = aws.test1
+
+  role       = aws_iam_role.ssm_client[0].name
+  policy_arn = data.aws_iam_policy.ssm.arn
+}
+
+resource "aws_iam_instance_profile" "ssm" {
+  count    = var.enable_test1_vpc ? 1 : 0
+  provider = aws.test1
+
+  name = "SSMClient"
+  role = aws_iam_role.ssm_client[0].name
+}
