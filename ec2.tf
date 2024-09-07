@@ -21,7 +21,7 @@ resource "aws_instance" "cloudslaw" {
   associate_public_ip_address = false
   iam_instance_profile        = aws_iam_instance_profile.ssm[0].name
   subnet_id                   = aws_subnet.cloudslaw_private_1[0].id
-  security_groups             = [aws_security_group.private[0].id]
+  vpc_security_group_ids      = [aws_security_group.private[0].id]
 
   tags = {
     Name = "SLAW"
