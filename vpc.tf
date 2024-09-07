@@ -243,20 +243,28 @@ resource "aws_security_group" "private" {
   }
 }
 
-resource "aws_eip" "nat" {
-  count    = var.enable_test1_vpc ? 1 : 0
-  provider = aws.test1
-}
-
-resource "aws_nat_gateway" "default" {
+# LAB: Keep Private Subnets Private with VPC Endpoints
+resource "aws_security_group" "endpoints" {
   count    = var.enable_test1_vpc ? 1 : 0
   provider = aws.test1
 
-  allocation_id = aws_eip.nat[0].id
-  subnet_id     = aws_subnet.cloudslaw_public_1[0].id
+  name        = "Endpoints"
+  description = "Security group allowing all outbound traffic and inbound HTTPS from VPC"
+  vpc_id      = aws_vpc.cloudslaw[0].id
 
-  tags = {
-    Name = "slaw-nat"
+  ingress {
+    description = "Intra-VPC HTTPS"
+    cidr_blocks = ["10.0.0.0/16"]
+    protocol    = "tcp"
+    from_port   = 443
+    to_port     = 443
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
@@ -265,11 +273,6 @@ resource "aws_route_table" "cloudslaw_private" {
   provider = aws.test1
 
   vpc_id = aws_vpc.cloudslaw[0].id
-
-  route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.default[0].id
-  }
 }
 
 resource "aws_route_table_association" "cloudslaw_private_1" {
