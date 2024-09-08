@@ -45,6 +45,10 @@ data "aws_iam_policy" "ssm" {
   name = "AmazonSSMManagedInstanceCore"
 }
 
+data "aws_iam_policy" "ssm_full" {
+  name = "AmazonSSMFullAccess"
+}
+
 resource "aws_iam_role_policy_attachment" "ssm" {
   role       = aws_iam_role.ssm.name
   policy_arn = data.aws_iam_policy.ssm.arn
@@ -149,6 +153,14 @@ resource "aws_iam_role_policy_attachment" "ssm_client" {
 
   role       = aws_iam_role.ssm_client[0].name
   policy_arn = data.aws_iam_policy.ssm.arn
+}
+
+resource "aws_iam_role_policy_attachment" "ssm_client_full" {
+  count    = var.enable_test1_vpc ? 1 : 0
+  provider = aws.test1
+
+  role       = aws_iam_role.ssm_client[0].name
+  policy_arn = data.aws_iam_policy.ssm_full.arn
 }
 
 resource "aws_iam_instance_profile" "ssm" {
