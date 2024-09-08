@@ -46,3 +46,28 @@ resource "aws_vpc_endpoint" "ec2messages" {
     dns_record_ip_type = "ipv4"
   }
 }
+
+# LAB: Enabling Logs in Session Manager
+data "aws_iam_policy_document" "s3_endpoint" {
+  statement {
+    effect    = "Allow"
+    actions   = ["s3:*"]
+    resources = ["*"]
+
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+  }
+}
+
+resource "aws_vpc_endpoint" "s3" {
+  count    = var.enable_test1_vpc ? 1 : 0
+  provider = aws.test1
+
+  vpc_id            = aws_vpc.cloudslaw[0].id
+  service_name      = "com.amazonaws.${var.region}.s3"
+  vpc_endpoint_type = "Gateway"
+  route_table_ids   = [aws_route_table.cloudslaw_private[0].id]
+  policy            = data.aws_iam_policy_document.s3_endpoint.json
+}

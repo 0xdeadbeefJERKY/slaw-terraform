@@ -45,10 +45,6 @@ data "aws_iam_policy" "ssm" {
   name = "AmazonSSMManagedInstanceCore"
 }
 
-data "aws_iam_policy" "ssm_full" {
-  name = "AmazonSSMFullAccess"
-}
-
 resource "aws_iam_role_policy_attachment" "ssm" {
   role       = aws_iam_role.ssm.name
   policy_arn = data.aws_iam_policy.ssm.arn
@@ -155,18 +151,37 @@ resource "aws_iam_role_policy_attachment" "ssm_client" {
   policy_arn = data.aws_iam_policy.ssm.arn
 }
 
-resource "aws_iam_role_policy_attachment" "ssm_client_full" {
-  count    = var.enable_test1_vpc ? 1 : 0
-  provider = aws.test1
-
-  role       = aws_iam_role.ssm_client[0].name
-  policy_arn = data.aws_iam_policy.ssm_full.arn
-}
-
 resource "aws_iam_instance_profile" "ssm" {
   count    = var.enable_test1_vpc ? 1 : 0
   provider = aws.test1
 
   name = "SSMClient"
   role = aws_iam_role.ssm_client[0].name
+}
+
+# LAB: Enabling Logs in Session Manager
+data "aws_iam_policy_document" "ssm_logs_s3_write" {
+  count    = var.enable_test1_vpc ? 1 : 0
+  provider = aws.test1
+
+  statement {
+    effect    = "Allow"
+    actions   = ["s3:PutObject"]
+    resources = ["${aws_s3_bucket.ssm_logs[0].arn}/*"]
+  }
+
+  statement {
+    effect    = "Allow"
+    actions   = ["s3:GetEncryptionConfiguration"]
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_role_policy" "ssm_logs_s3_write" {
+  count    = var.enable_test1_vpc ? 1 : 0
+  provider = aws.test1
+
+  name   = "allow-ssm-logs-s3-write"
+  role   = aws_iam_role.ssm_client[0].name
+  policy = data.aws_iam_policy_document.ssm_logs_s3_write[0].json
 }
