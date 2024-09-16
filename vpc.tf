@@ -290,3 +290,83 @@ resource "aws_route_table_association" "cloudslaw_private_2" {
   subnet_id      = aws_subnet.cloudslaw_private_2[0].id
   route_table_id = aws_route_table.cloudslaw_private[0].id
 }
+
+# LAB: Let's Get Hacked! Public SSH Edition
+resource "aws_vpc" "exposed" {
+  count    = var.enable_ssh_exposed ? 1 : 0
+  provider = aws.test1
+
+  cidr_block           = "10.0.0.0/16"
+  enable_dns_hostnames = true
+  enable_dns_support   = true
+  instance_tenancy     = "default"
+
+  tags = {
+    Name = "Exposed"
+  }
+}
+
+resource "aws_internet_gateway" "exposed" {
+  count    = var.enable_ssh_exposed ? 1 : 0
+  provider = aws.test1
+
+  vpc_id = aws_vpc.exposed[0].id
+
+  tags = {
+    Name = "exposed-ig"
+  }
+}
+
+resource "aws_subnet" "exposed" {
+  count    = var.enable_ssh_exposed ? 1 : 0
+  provider = aws.test1
+
+  vpc_id                  = aws_vpc.exposed[0].id
+  availability_zone       = "us-west-2a"
+  cidr_block              = "10.0.1.0/24"
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "Exposed-Public"
+  }
+}
+
+resource "aws_route_table" "exposed_public" {
+  count    = var.enable_ssh_exposed ? 1 : 0
+  provider = aws.test1
+
+  vpc_id = aws_vpc.exposed[0].id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.exposed[0].id
+  }
+}
+
+resource "aws_route_table_association" "exposed_public" {
+  count    = var.enable_ssh_exposed ? 1 : 0
+  provider = aws.test1
+
+  subnet_id      = aws_subnet.exposed[0].id
+  route_table_id = aws_route_table.exposed_public[0].id
+}
+
+resource "aws_security_group" "exposed_public" {
+  count    = var.enable_ssh_exposed ? 1 : 0
+  provider = aws.test1
+
+  name        = "Allow SSH"
+  description = "Allow SSH access from anywhere"
+  vpc_id      = aws_vpc.exposed[0].id
+
+  ingress {
+    protocol    = "tcp"
+    from_port   = 22
+    to_port     = 22
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "AllowSSHSecurityGroup"
+  }
+}

@@ -89,3 +89,9 @@ variable "enable_test1_vpc" {
   default     = false
   description = "Deploys test VPC in Test1 account"
 }
+
+variable "enable_ssh_exposed" {
+  type        = bool
+  default     = false
+  description = "Deploys exposed SSH resources to Test1 account"
+}
