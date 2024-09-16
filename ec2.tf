@@ -1,6 +1,6 @@
 # LAB: Running Our First Instance (Finally!)
 data "aws_ami" "amazon_linux" {
-  count    = var.enable_test1_vpc ? 1 : 0
+  count    = var.enable_ssh_exposed ? 1 : 0
   provider = aws.test1
 
   most_recent = true
@@ -25,5 +25,21 @@ resource "aws_instance" "cloudslaw" {
 
   tags = {
     Name = "SLAW-${count.index}"
+  }
+}
+
+# LAB: Let's Get Hacked! Public SSH Edition
+resource "aws_instance" "exposed" {
+  count    = var.enable_ssh_exposed ? 1 : 0
+  provider = aws.test1
+
+  ami                         = data.aws_ami.amazon_linux[0].image_id
+  instance_type               = "t2.micro"
+  associate_public_ip_address = true
+  subnet_id                   = aws_subnet.exposed[0].id
+  vpc_security_group_ids      = [aws_security_group.exposed_public[0].id]
+
+  tags = {
+    Name = "HackMePlease"
   }
 }
