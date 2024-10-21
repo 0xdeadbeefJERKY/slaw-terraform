@@ -89,7 +89,7 @@ module "vpc_endpoints" {
       private_dns_enabled = true
       vpc_endpoint_type   = "Gateway"
       policy              = data.aws_iam_policy_document.s3_endpoint.json
-      subnet_id           = module.vpc.private_subnets
+      subnet_ids          = module.vpc.private_subnets
 
       dns_options = {
         dns_record_ip_type = "ipv4"
@@ -98,7 +98,7 @@ module "vpc_endpoints" {
     ec2messages = {
       service             = "ec2messages"
       private_dns_enabled = true
-      subnet_id           = module.vpc.private_subnets
+      subnet_ids          = module.vpc.private_subnets
 
       dns_options = {
         dns_record_ip_type = "ipv4"
@@ -107,7 +107,7 @@ module "vpc_endpoints" {
     ssmmessages = {
       service             = "ssmmessages"
       private_dns_enabled = true
-      subnet_id           = module.vpc.private_subnets
+      subnet_ids          = module.vpc.private_subnets
 
       dns_options = {
         dns_record_ip_type = "ipv4"
@@ -116,7 +116,7 @@ module "vpc_endpoints" {
     ssm = {
       service             = "ssm"
       private_dns_enabled = true
-      subnet_id           = module.vpc.private_subnets
+      subnet_ids          = module.vpc.private_subnets
 
       dns_options = {
         dns_record_ip_type = "ipv4"

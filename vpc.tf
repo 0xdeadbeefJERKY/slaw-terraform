@@ -1,5 +1,9 @@
 module "test_vpc" {
-  count  = var.enable_test1_vpc ? 1 : 0
+  count = var.enable_test1_vpc ? 1 : 0
+  providers = {
+    aws = aws.test1
+  }
+
   source = "./modules/vpc"
 }
 
