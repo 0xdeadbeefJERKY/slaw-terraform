@@ -20,7 +20,7 @@ resource "aws_instance" "cloudslaw" {
   instance_type               = "t2.micro"
   associate_public_ip_address = false
   iam_instance_profile        = aws_iam_instance_profile.ssm[0].name
-  subnet_id                   = aws_subnet.cloudslaw_private_1[0].id
+  subnet_id                   = module.test_vpc[0].private_subnets[0].id
   vpc_security_group_ids      = [aws_security_group.private[0].id]
 
   tags = {
@@ -36,7 +36,7 @@ resource "aws_instance" "exposed" {
   ami                         = data.aws_ami.amazon_linux[0].image_id
   instance_type               = "t2.micro"
   associate_public_ip_address = true
-  subnet_id                   = aws_subnet.exposed[0].id
+  subnet_id                   = module.test_vpc[0].public_subnets[0].id
   vpc_security_group_ids      = [aws_security_group.exposed_public[0].id]
 
   tags = {
