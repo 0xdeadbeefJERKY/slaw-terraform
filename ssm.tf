@@ -23,8 +23,8 @@ resource "aws_ssm_document" "session_manager_prefs" {
     description   = "Document to hold regional settings for Session Manager"
     sessionType   = "Standard_Stream"
     inputs = {
-      s3EncryptionEnabled         = true
-      s3BucketName                = aws_s3_bucket.ssm_logs[0].bucket
+      # s3EncryptionEnabled         = true
+      # s3BucketName                = aws_s3_bucket.ssm_logs[0].bucket
       cloudWatchEncryptionEnabled = true
       cloudWatchStreamingEnabled  = true
       idleSessionTimeout          = "20"
