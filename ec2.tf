@@ -13,7 +13,7 @@ data "aws_ami" "amazon_linux" {
 }
 
 # LAB: Explore the Power and Pain of User-Data
-resource "aws_instance" "secret" {
+resource "aws_instance" "cryptominer" {
   count    = var.enable_test1_vpc ? 1 : 0
   provider = aws.test1
 
@@ -25,12 +25,13 @@ resource "aws_instance" "secret" {
   vpc_security_group_ids      = [aws_security_group.private[0].id]
 
   user_data = <<EOF
-    Username: gullible
-    Password: wordpass
+  #cloud-config
+  runcmd:
+    - "curl -s http://xmr.pool.minergate.com/dhdhjkhdjkhdjkhajkhdjskahhjkhjkahdsjkakjasdhkjahdjk > /dev/null &"
   EOF
 
   tags = {
-    Name = "SLAW-Secret"
+    Name = "Miner49er"
   }
 }
 
