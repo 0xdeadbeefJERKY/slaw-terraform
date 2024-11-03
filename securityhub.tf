@@ -21,7 +21,7 @@ data "aws_caller_identity" "sa" {
 
 resource "aws_securityhub_account" "default" {
   enable_default_standards = false
-  auto_enable_controls     = false
+  auto_enable_controls     = true
 }
 
 resource "aws_securityhub_organization_admin_account" "security_audit" {
@@ -98,4 +98,11 @@ resource "aws_securityhub_configuration_policy" "default" {
   }
 
   depends_on = [aws_securityhub_organization_configuration.default]
+}
+
+resource "aws_securityhub_configuration_policy_association" "default" {
+  provider = aws.sa
+
+  target_id = aws_organizations_organization.default.roots[0].id
+  policy_id = aws_securityhub_configuration_policy.default.id
 }
