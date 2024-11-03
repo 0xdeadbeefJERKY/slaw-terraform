@@ -21,7 +21,7 @@ data "aws_caller_identity" "sa" {
 
 resource "aws_securityhub_account" "default" {
   enable_default_standards = false
-  auto_enable_controls     = false
+  auto_enable_controls     = true
 }
 
 resource "aws_securityhub_organization_admin_account" "security_audit" {
@@ -32,31 +32,31 @@ resource "aws_securityhub_organization_admin_account" "security_audit" {
 # Run `terraform apply`, then comment out the below resources.
 ##############################################################################
 
-# import {
-#   provider = aws.sa
+import {
+  provider = aws.sa
 
-#   to = aws_securityhub_standards_subscription.aws_best_practices_100
-#   id = "arn:aws:securityhub:${data.aws_region.sa.name}:${data.aws_caller_identity.sa.account_id}:subscription/aws-foundational-security-best-practices/v/1.0.0"
-# }
+  to = aws_securityhub_standards_subscription.aws_best_practices_100
+  id = "arn:aws:securityhub:${data.aws_region.sa.name}:${data.aws_caller_identity.sa.account_id}:subscription/aws-foundational-security-best-practices/v/1.0.0"
+}
 
-# resource "aws_securityhub_standards_subscription" "aws_best_practices_100" {
-#   provider = aws.sa
+resource "aws_securityhub_standards_subscription" "aws_best_practices_100" {
+  provider = aws.sa
 
-#   standards_arn = "arn:aws:securityhub:${data.aws_region.sa.name}::standards/aws-foundational-security-best-practices/v/1.0.0"
-# }
+  standards_arn = "arn:aws:securityhub:${data.aws_region.sa.name}::standards/aws-foundational-security-best-practices/v/1.0.0"
+}
 
-# import {
-#   provider = aws.sa
+import {
+  provider = aws.sa
 
-#   to = aws_securityhub_standards_subscription.cis
-#   id = "arn:aws:securityhub:${data.aws_region.sa.name}:${data.aws_caller_identity.sa.account_id}:subscription/cis-aws-foundations-benchmark/v/1.2.0"
-# }
+  to = aws_securityhub_standards_subscription.cis
+  id = "arn:aws:securityhub:${data.aws_region.sa.name}:${data.aws_caller_identity.sa.account_id}:subscription/cis-aws-foundations-benchmark/v/1.2.0"
+}
 
-# resource "aws_securityhub_standards_subscription" "cis" {
-#   provider = aws.sa
+resource "aws_securityhub_standards_subscription" "cis" {
+  provider = aws.sa
 
-#   standards_arn = "arn:aws:securityhub:::ruleset/cis-aws-foundations-benchmark/v/1.2.0"
-# }
+  standards_arn = "arn:aws:securityhub:::ruleset/cis-aws-foundations-benchmark/v/1.2.0"
+}
 
 ##############################################################################
 # End comment block
@@ -98,4 +98,11 @@ resource "aws_securityhub_configuration_policy" "default" {
   }
 
   depends_on = [aws_securityhub_organization_configuration.default]
+}
+
+resource "aws_securityhub_configuration_policy_association" "default" {
+  provider = aws.sa
+
+  target_id = aws_organizations_organization.default.roots[0].id
+  policy_id = aws_securityhub_configuration_policy.default.id
 }
